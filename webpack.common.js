@@ -1,6 +1,8 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const TerserJSPlugin = require("terser-webpack-plugin");
 const path = require('path');
+const webpack = require('webpack');
 
 const webpackConfig = {
     entry: {
@@ -11,6 +13,28 @@ const webpackConfig = {
         path: path.resolve(__dirname, './build'),
         publicPath: "/"
     },
+    resolve: {
+        modules: [
+            path.resolve(__dirname, "src/"),
+            path.resolve(__dirname, "src/asset"),
+            path.resolve(__dirname, "src/components"),
+            path.resolve(__dirname, "src/containers"),
+            path.resolve(__dirname, "src/modules"),
+            path.resolve(__dirname, "src/store"),
+            "node_modules"
+        ]
+    },
+    optimization: {
+        minimizer: [new TerserJSPlugin({})]
+    },
+    plugins: [
+        new CleanWebpackPlugin(),
+        new HtmlWebPackPlugin({
+            template: './src/index.html',
+            inject: 'body'
+        }),
+        new webpack.optimize.AggressiveMergingPlugin()
+    ],
     module: {
         rules: [
             {
@@ -28,13 +52,7 @@ const webpackConfig = {
                 },
             }
         ]
-    },
-    plugins: [
-        new HtmlWebPackPlugin({
-            template: './src/index.html'
-        }),
-        new CleanWebpackPlugin(),
-    ]
+    }
 }
 
 module.exports = webpackConfig;
